@@ -16,6 +16,7 @@ const EditTaskModal = ({ open, onClose, task }) => {
   useEffect(() => {
     if (task) {
       setValue('title', task.title || '');
+      setValue('description', task.description || '');
       setValue('time', task.time || '10:00');
       setValue('duration', task.duration || 45);
       setValue('category', task.category || 'work');
@@ -27,6 +28,7 @@ const EditTaskModal = ({ open, onClose, task }) => {
     if (!task) return;
     updateTaskDetails(task.id, {
       title: data.title,
+      description: data.description,
       time: data.time,
       duration: parseInt(data.duration, 10) || 45,
       category: data.category,
@@ -51,6 +53,17 @@ const EditTaskModal = ({ open, onClose, task }) => {
             {...register('title', { required: 'Task name is required' })}
             error={Boolean(errors.title)}
             helperText={errors.title?.message}
+          />
+
+          {/* Task Description */}
+          <TextField
+            fullWidth
+            multiline
+            rows={2}
+            label="Task Description & Notes"
+            variant="outlined"
+            placeholder="Detailed notes or focus objectives..."
+            {...register('description')}
           />
 
           {/* Time & Duration Fields */}
