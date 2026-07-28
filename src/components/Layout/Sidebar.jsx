@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Box, Typography } from '@mui/material';
-import { LayoutDashboard, Clock, Target, BarChart3, Settings, Zap, CheckCircle2 } from 'lucide-react';
+import { Box, Typography, IconButton } from '@mui/material';
+import { LayoutDashboard, Clock, Target, BarChart3, Settings, Zap, CheckCircle2, X } from 'lucide-react';
 import { usePlannerStore } from '../../store/usePlannerStore';
 
 const NAV_ITEMS = [
@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { path: '/settings', label: 'Settings & Lifestyle', icon: Settings }
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isMobileDrawer = false, onClose }) => {
   const { tasks, habits } = usePlannerStore();
 
   const completedTasks = tasks.filter((t) => t.completed).length;
@@ -20,27 +20,34 @@ const Sidebar = () => {
 
   return (
     <Box
-      className="neumo-card"
+      className={isMobileDrawer ? '' : 'neumo-card'}
       sx={{
-        width: { xs: '100%', md: 240 },
-        minWidth: 240,
+        width: isMobileDrawer ? '100%' : { xs: '100%', md: 240 },
+        minWidth: isMobileDrawer ? 'auto' : 240,
         height: 'fit-content',
-        p: 2.5,
+        p: isMobileDrawer ? 1 : 2.5,
         display: 'flex',
         flexDirection: 'column',
         gap: 3,
-        position: 'sticky',
+        position: isMobileDrawer ? 'static' : 'sticky',
         top: 90,
         backgroundColor: '#FFFFFF',
-        boxShadow: '8px 8px 24px rgba(124, 92, 252, 0.08), -8px -8px 20px #FFFFFF',
-        border: '1px solid rgba(124, 92, 252, 0.12)'
+        boxShadow: isMobileDrawer ? 'none' : '8px 8px 24px rgba(124, 92, 252, 0.08), -8px -8px 20px #FFFFFF',
+        border: isMobileDrawer ? 'none' : '1px solid rgba(124, 92, 252, 0.12)'
       }}
     >
       {/* Navigation Links */}
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Typography variant="caption" sx={{ px: 1, color: '#7C5CFC', fontWeight: 800, letterSpacing: 1 }}>
-          NAVIGATION
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 1, mb: 0.5 }}>
+          <Typography variant="caption" sx={{ color: '#7C5CFC', fontWeight: 800, letterSpacing: 1 }}>
+            NAVIGATION
+          </Typography>
+          {isMobileDrawer && (
+            <IconButton size="small" onClick={onClose} sx={{ color: '#6B7280' }}>
+              <X size={18} />
+            </IconButton>
+          )}
+        </Box>
 
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
@@ -48,6 +55,9 @@ const Sidebar = () => {
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={() => {
+                if (isMobileDrawer && onClose) onClose();
+              }}
               style={{ textDecoration: 'none' }}
             >
               {({ isActive }) => (

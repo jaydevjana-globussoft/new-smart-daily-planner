@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, IconButton, Badge, Menu, MenuItem, Tooltip, Chip } from '@mui/material';
-import { Sparkles, Bell, Command, Check, Layers, MoreVertical } from 'lucide-react';
+import { Box, Typography, IconButton, Badge, Menu as MuiMenu, MenuItem, Tooltip, Chip } from '@mui/material';
+import { Sparkles, Bell, Command, Check, Layers, Menu as MenuIcon, Plus } from 'lucide-react';
 import { usePlannerStore } from '../../store/usePlannerStore';
 import { useAIStore } from '../../store/useAIStore';
 import { USER_ARCHETYPES } from '../../constants/plannerData';
 import NotificationCenter from '../Notifications/NotificationCenter';
 
-const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
+const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd, onToggleMobileNav }) => {
   const { archetype, setArchetype, notifications, sidebarCollapsed, toggleSidebar } = usePlannerStore();
   const { toggleOpen: toggleAIOpen, isOpen: isAIOpen } = useAIStore();
 
@@ -20,6 +20,14 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
     }
   }, []);
 
+  const handleToggle = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 900) {
+      if (onToggleMobileNav) onToggleMobileNav();
+    } else {
+      toggleSidebar();
+    }
+  };
+
   const currentArchetypeObj = USER_ARCHETYPES.find((a) => a.id === archetype) || USER_ARCHETYPES[0];
   const unreadNotifs = notifications.filter((n) => !n.read).length;
 
@@ -30,7 +38,7 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
         position: 'sticky',
         top: 0,
         zIndex: 1100,
-        px: { xs: 2, md: 4 },
+        px: { xs: 1.5, sm: 3, md: 4 },
         py: 1.5,
         display: 'flex',
         alignItems: 'center',
@@ -39,10 +47,10 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
       }}
     >
       {/* Brand & Sidebar Toggle */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Tooltip title={sidebarCollapsed ? "Expand Left Navigation Bar" : "Hide Left Navigation Bar"}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+        <Tooltip title={sidebarCollapsed ? "Expand Navigation Bar" : "Collapse Navigation Bar"}>
           <IconButton
-            onClick={toggleSidebar}
+            onClick={handleToggle}
             sx={{
               color: '#1F2937',
               backgroundColor: '#FFFFFF',
@@ -55,7 +63,7 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
               }
             }}
           >
-            <MoreVertical size={20} />
+            <MenuIcon size={20} />
           </IconButton>
         </Tooltip>
 
@@ -104,7 +112,7 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
           />
         </Tooltip>
 
-        <Menu
+        <MuiMenu
           anchorEl={archetypeMenuAnchor}
           open={Boolean(archetypeMenuAnchor)}
           onClose={() => setArchetypeMenuAnchor(null)}
@@ -145,7 +153,7 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
               {archetype === arch.id && <Check size={16} color="#7C5CFC" />}
             </MenuItem>
           ))}
-        </Menu>
+        </MuiMenu>
       </Box>
 
       {/* Center Search / Command Palette shortcut */}
@@ -175,19 +183,20 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
       </Box>
 
       {/* Action Controls */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.8, sm: 1.5 } }}>
         {/* Quick Add Button */}
         <button
           onClick={onOpenQuickAdd}
           className="skeuo-btn"
           style={{
-            padding: '8px 16px',
+            padding: '8px 14px',
             fontSize: '0.85rem',
             background: 'linear-gradient(145deg, #22C55E, #16A34A)',
             boxShadow: '0px 4px 0px #15803D, 0px 6px 14px rgba(34, 197, 94, 0.3)'
           }}
         >
-          + Quick Add
+          <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>+ Quick Add</Box>
+          <Box sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center' }}><Plus size={16} /></Box>
         </button>
 
         {/* Notifications Icon */}
@@ -202,7 +211,7 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
           }}
         >
           <Badge badgeContent={unreadNotifs} color="error">
-            <Bell size={20} />
+            <Bell size={18} />
           </Badge>
         </IconButton>
 
@@ -217,7 +226,7 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
           onClick={toggleAIOpen}
           className={`skeuo-btn ${!isAIOpen ? 'ai-glow' : ''}`}
           style={{
-            padding: '8px 18px',
+            padding: '8px 16px',
             fontSize: '0.85rem',
             background: isAIOpen
               ? 'linear-gradient(145deg, #FF7A59, #E55C3A)'
@@ -228,7 +237,7 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
           }}
         >
           <Sparkles size={16} />
-          <span>AI Assistant</span>
+          <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>AI Assistant</Box>
         </button>
       </Box>
     </Box>

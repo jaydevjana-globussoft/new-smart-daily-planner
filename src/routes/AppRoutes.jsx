@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import DashboardLayout from '../layouts/DashboardLayout';
 import DashboardPage from '../pages/DashboardPage';
+import TimelinePage from '../pages/TimelinePage';
 import AnalyticsPage from '../pages/AnalyticsPage';
 import HabitsGoalsPage from '../pages/HabitsGoalsPage';
 import SettingsPage from '../pages/SettingsPage';
@@ -18,7 +19,7 @@ const AppRoutes = () => {
       {/* Main Dashboard Application */}
       <Route path="/" element={<DashboardLayout />}>
         <Route index element={<DashboardPage />} />
-        <Route path="timeline" element={<DashboardPage />} />
+        <Route path="timeline" element={<TimelinePage />} />
         <Route path="habits-goals" element={<HabitsGoalsPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="settings" element={<SettingsPage />} />
