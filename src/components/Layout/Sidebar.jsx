@@ -86,7 +86,7 @@ const Sidebar = () => {
         className="neumo-inset"
         sx={{
           p: 2,
-          borderRadius: 3,
+          borderRadius: '20px',
           display: 'flex',
           flexDirection: 'column',
           gap: 1.5,

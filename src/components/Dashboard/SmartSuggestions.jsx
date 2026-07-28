@@ -27,7 +27,7 @@ const SmartSuggestions = () => {
     <NeumoCard sx={{ p: { xs: 2.5, md: 3 } }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2.5 }}>
-        <Box sx={{ p: 1, borderRadius: 2.5, backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ p: 1, borderRadius: '20px', backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex', alignItems: 'center' }}>
           <Sparkles size={20} className="ai-glow" />
         </Box>
         <Box>
@@ -55,7 +55,7 @@ const SmartSuggestions = () => {
               <Box
                 sx={{
                   p: 2.5,
-                  borderRadius: 4,
+                  borderRadius: '20px',
                   backgroundColor: '#FFFFFF',
                   border: '1px solid rgba(124, 92, 252, 0.15)',
                   boxShadow: '4px 4px 14px rgba(124, 92, 252, 0.08), -4px -4px 12px #FFFFFF',
