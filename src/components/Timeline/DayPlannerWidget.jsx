@@ -18,13 +18,18 @@ import {
   CheckCircle2,
   Circle,
   Sparkles,
-  Pencil,
   Plus,
   ChevronDown,
   GripVertical,
   Zap,
   Info,
-  Calendar as CalendarIcon
+  MousePointer,
+  Move,
+  Maximize2,
+  Calendar as CalendarIcon,
+  Flame,
+  Coffee,
+  Moon
 } from 'lucide-react';
 import NeumoCard from '../Common/NeumoCard';
 import EditTaskModal from '../QuickActions/EditTaskModal';
@@ -73,83 +78,128 @@ const formatDurationLabel = (durationMins) => {
   return `${durationMins}m`;
 };
 
-const formatTimeRange = (startStr, durationMins) => {
-  const startMin = timeToMinutes(startStr);
-  const endMin = (startMin + durationMins) % 1440;
-  return `${startStr} – ${minutesToTime(endMin)} (${formatDurationLabel(durationMins)})`;
-};
-
-// Rich Hover Tooltip Component for Activity Blocks
-const RichTooltipCard = ({ task, startMin, totalDuration }) => {
+// Rich Glassmorphism Hover Tooltip Component for Activity Blocks
+const RichTooltipCard = ({ task, startMin, totalDuration, isActiveNow }) => {
   const categoryConfig = CATEGORY_COLORS[task.category] || CATEGORY_COLORS.work;
   const endMin = (startMin + totalDuration) % 1440;
 
+  const getEnergyConfig = (energyStr) => {
+    const e = (energyStr || 'Medium').toLowerCase();
+    if (e.includes('high')) return { icon: '🟢', label: 'High Energy', color: '#4ADE80' };
+    if (e.includes('low')) return { icon: '🟠', label: 'Low Energy', color: '#FB923C' };
+    if (e.includes('recovery')) return { icon: '🔵', label: 'Recovery', color: '#60A5FA' };
+    if (e.includes('rest')) return { icon: '🌙', label: 'Rest', color: '#C084FC' };
+    return { icon: '🟡', label: 'Medium Energy', color: '#FACC15' };
+  };
+
+  const energyInfo = getEnergyConfig(task.energy);
+
   return (
-    <Box sx={{ p: 1.5, maxWidth: 280 }}>
-      {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 1 }}>
-        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#FFFFFF', fontSize: '0.9rem', lineHeight: 1.2 }}>
+    <Box sx={{ p: 2, minWidth: 260, maxWidth: 320 }}>
+      {/* Title & Category Chip */}
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, mb: 1.2 }}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#FFFFFF', fontSize: '0.95rem', lineHeight: 1.3 }}>
           {task.title}
         </Typography>
         <Chip
           label={categoryConfig.label}
           size="small"
           sx={{
-            height: 20,
-            fontSize: '0.65rem',
+            height: 22,
+            fontSize: '0.675rem',
             fontWeight: 800,
-            backgroundColor: 'rgba(255, 255, 255, 0.25)',
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
             color: '#FFFFFF',
-            border: '1px solid rgba(255, 255, 255, 0.4)'
+            border: '1px solid rgba(255, 255, 255, 0.35)',
+            backdropFilter: 'blur(8px)',
+            flexShrink: 0
           }}
         />
       </Box>
 
-      {/* Description if available */}
-      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '0.775rem', mb: 1.2, fontStyle: task.description ? 'normal' : 'italic' }}>
-        {task.description || 'No description added. Double-click block to add notes.'}
+      {/* Description */}
+      <Typography
+        variant="body2"
+        sx={{
+          color: 'rgba(255, 255, 255, 0.88)',
+          fontSize: '0.785rem',
+          mb: 1.5,
+          lineHeight: 1.4,
+          fontStyle: task.description ? 'normal' : 'italic'
+        }}
+      >
+        {task.description || 'No description provided for this activity.'}
       </Typography>
 
-      <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.25)', my: 1 }} />
+      <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.2)', my: 1 }} />
 
-      {/* Time & Duration Details */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.6 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.725rem', fontWeight: 600 }}>
-            Time Window:
+      {/* 2-Column Attributes Grid */}
+      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.2 }}>
+        <Box>
+          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.65)', display: 'block', fontSize: '0.675rem', fontWeight: 700, letterSpacing: '0.5px' }}>
+            START TIME
           </Typography>
-          <Typography variant="caption" sx={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.75rem' }}>
-            {task.time} – {minutesToTime(endMin)}
+          <Typography variant="caption" sx={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.8rem' }}>
+            {task.time || minutesToTime(startMin)}
           </Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.725rem', fontWeight: 600 }}>
-            Duration:
+        <Box>
+          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.65)', display: 'block', fontSize: '0.675rem', fontWeight: 700, letterSpacing: '0.5px' }}>
+            END TIME
           </Typography>
-          <Typography variant="caption" sx={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.75rem' }}>
-            {formatDurationLabel(totalDuration)} ({totalDuration} mins)
+          <Typography variant="caption" sx={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.8rem' }}>
+            {minutesToTime(endMin)}
           </Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.725rem', fontWeight: 600 }}>
-            Focus Level:
+        <Box>
+          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.65)', display: 'block', fontSize: '0.675rem', fontWeight: 700, letterSpacing: '0.5px' }}>
+            DURATION
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Zap size={12} color="#F59E0B" />
-            <Typography variant="caption" sx={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.75rem' }}>
-              {task.energy || 'Medium'} Focus
-            </Typography>
-          </Box>
+          <Typography variant="caption" sx={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.8rem' }}>
+            {formatDurationLabel(totalDuration)} ({totalDuration}m)
+          </Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.725rem', fontWeight: 600 }}>
-            Status:
+        <Box>
+          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.65)', display: 'block', fontSize: '0.675rem', fontWeight: 700, letterSpacing: '0.5px' }}>
+            PRIORITY
           </Typography>
-          <Typography variant="caption" sx={{ color: task.completed ? '#4ADE80' : '#FDE047', fontWeight: 800, fontSize: '0.75rem' }}>
-            {task.completed ? '✓ Completed' : '⚡ In Progress'}
+          <Typography
+            variant="caption"
+            sx={{
+              color: task.priority === 'High' ? '#FF7A59' : task.priority === 'Low' ? '#60A5FA' : '#FACC15',
+              fontWeight: 800,
+              fontSize: '0.8rem'
+            }}
+          >
+            {task.priority || 'Medium'}
+          </Typography>
+        </Box>
+
+        <Box>
+          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.65)', display: 'block', fontSize: '0.675rem', fontWeight: 700, letterSpacing: '0.5px' }}>
+            ENERGY LEVEL
+          </Typography>
+          <Typography variant="caption" sx={{ color: energyInfo.color, fontWeight: 800, fontSize: '0.8rem' }}>
+            {energyInfo.icon} {energyInfo.label}
+          </Typography>
+        </Box>
+
+        <Box>
+          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.65)', display: 'block', fontSize: '0.675rem', fontWeight: 700, letterSpacing: '0.5px' }}>
+            STATUS
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              color: task.completed ? '#4ADE80' : isActiveNow ? '#FF7A59' : '#FDE047',
+              fontWeight: 800,
+              fontSize: '0.8rem'
+            }}
+          >
+            {task.completed ? '✓ Completed' : isActiveNow ? '⚡ Active Now' : '⏳ Scheduled'}
           </Typography>
         </Box>
       </Box>
@@ -160,7 +210,7 @@ const RichTooltipCard = ({ task, startMin, totalDuration }) => {
 const DayPlannerWidget = () => {
   const { tasks, addTask, updateTaskTimeAndDuration, deleteTask, toggleTask } = usePlannerStore();
 
-  const [snapInterval, setSnapInterval] = useState(15); // 15 or 30 mins
+  const [snapInterval, setSnapInterval] = useState(15);
   const [editingTask, setEditingTask] = useState(null);
   const [currentTimeMinutes, setCurrentTimeMinutes] = useState(
     dayjs().hour() * 60 + dayjs().minute()
@@ -172,36 +222,54 @@ const DayPlannerWidget = () => {
   // Dragging & Resizing State
   const [dragState, setDragState] = useState(null);
   const trackRef = useRef(null);
+  const clickTimerRef = useRef(null);
+  const hasDraggedRef = useRef(false);
 
-  // Keyframes style insertion for CSS marquee description text
+  // Keyframes style insertion for CSS marquee title animation
   useEffect(() => {
-    const styleId = 'day-planner-marquee-style';
+    const styleId = 'day-planner-css-marquee-style';
     if (!document.getElementById(styleId)) {
       const styleEl = document.createElement('style');
       styleEl.id = styleId;
       styleEl.innerHTML = `
-        @keyframes marqueeScroll {
+        @keyframes cssMarqueeScroll {
           0% { transform: translateX(0%); }
           100% { transform: translateX(-50%); }
         }
-        .marquee-track {
-          display: inline-flex;
+        .css-marquee-container {
+          overflow: hidden;
           white-space: nowrap;
-          animation: marqueeScroll 10s linear infinite;
+          width: 100%;
+          display: block;
+          position: relative;
         }
-        .marquee-track:hover {
+        .css-marquee-track {
+          display: inline-block;
+          white-space: nowrap;
+          animation: cssMarqueeScroll 12s linear infinite;
+        }
+        .css-marquee-track:hover {
           animation-play-state: paused;
+        }
+        @keyframes activeTaskPulse {
+          0% { box-shadow: 0 0 12px rgba(255, 122, 89, 0.7), inset 0 0 8px rgba(255, 255, 255, 0.5); }
+          50% { box-shadow: 0 0 24px rgba(255, 122, 89, 1), inset 0 0 14px rgba(255, 255, 255, 0.8); }
+          100% { box-shadow: 0 0 12px rgba(255, 122, 89, 0.7), inset 0 0 8px rgba(255, 255, 255, 0.5); }
+        }
+        .active-task-glow {
+          animation: activeTaskPulse 2.5s ease-in-out infinite;
+          border: 2px solid #FF7A59 !important;
         }
       `;
       document.head.appendChild(styleEl);
     }
   }, []);
 
-  // Update current time line every 30s
+  // Update current time line every 10 seconds automatically
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTimeMinutes(dayjs().hour() * 60 + dayjs().minute());
-    }, 30000);
+    }, 10000);
     return () => clearInterval(timer);
   }, []);
 
@@ -213,6 +281,12 @@ const DayPlannerWidget = () => {
       if (!trackRef.current) return;
       const rect = trackRef.current.getBoundingClientRect();
       const deltaX = e.clientX - dragState.initialX;
+      
+      // If mouse moved more than 3px, mark as dragged so single click is ignored
+      if (Math.abs(deltaX) > 3) {
+        hasDraggedRef.current = true;
+      }
+
       const deltaMinutes = (deltaX / rect.width) * 1440;
 
       if (dragState.type === 'move') {
@@ -220,7 +294,6 @@ const DayPlannerWidget = () => {
         let snappedStart = Math.round(rawNewStart / snapInterval) * snapInterval;
         snappedStart = Math.max(0, Math.min(1439, (snappedStart + 1440) % 1440));
 
-        // Live calculation for visual indicator
         setDragState((prev) => (prev ? { ...prev, currentStartMin: snappedStart } : null));
 
         updateTaskTimeAndDuration(dragState.taskId, minutesToTime(snappedStart), dragState.initialDuration);
@@ -236,7 +309,7 @@ const DayPlannerWidget = () => {
         const rawNewStart = dragState.initialStartMin + deltaMinutes;
         let snappedStart = Math.round(rawNewStart / snapInterval) * snapInterval;
         snappedStart = Math.max(0, Math.min(1439, (snappedStart + 1440) % 1440));
-        
+
         const delta = snappedStart - dragState.initialStartMin;
         const newDuration = Math.max(snapInterval, dragState.initialDuration - delta);
 
@@ -248,6 +321,11 @@ const DayPlannerWidget = () => {
 
     const handleMouseUp = () => {
       setDragState(null);
+      if (hasDraggedRef.current) {
+        setTimeout(() => {
+          hasDraggedRef.current = false;
+        }, 150);
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -257,6 +335,28 @@ const DayPlannerWidget = () => {
       window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [dragState, snapInterval, updateTaskTimeAndDuration]);
+
+  // Handle single click (toggle completion) and double click (edit modal) without conflict
+  const handleBlockSingleClick = (taskId) => {
+    if (hasDraggedRef.current) return;
+
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
+      clickTimerRef.current = null;
+    }
+    clickTimerRef.current = setTimeout(() => {
+      toggleTask(taskId);
+      clickTimerRef.current = null;
+    }, 220);
+  };
+
+  const handleBlockDoubleClick = (task) => {
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
+      clickTimerRef.current = null;
+    }
+    setEditingTask(task);
+  };
 
   // Quick Add Preset Handler
   const handleAddPreset = (preset) => {
@@ -282,6 +382,7 @@ const DayPlannerWidget = () => {
   const startDrag = (e, taskId, type, startMin, duration) => {
     e.stopPropagation();
     e.preventDefault();
+    hasDraggedRef.current = false;
     setDragState({
       taskId,
       type,
@@ -303,7 +404,6 @@ const DayPlannerWidget = () => {
     const endMin = startMin + totalDuration;
 
     if (endMin <= 1440) {
-      // Daytime single block
       renderedSegments.push({
         task,
         realStartMin: startMin,
@@ -315,7 +415,6 @@ const DayPlannerWidget = () => {
         touchesRightEdge: endMin >= 1439
       });
     } else {
-      // Overnight block (wrapping midnight)
       const eveningDuration = 1440 - startMin;
       renderedSegments.push({
         task,
@@ -355,7 +454,7 @@ const DayPlannerWidget = () => {
               Day Planner
             </Typography>
             <Typography variant="body2" sx={{ color: '#6B7280' }}>
-              Interactive 24-hour visual schedule • Drag blocks to move, resize edges to adjust duration, double-click to edit
+              Interactive 24-hour visual schedule • Single click complete, double click edit, drag edges to resize
             </Typography>
           </Box>
         </Box>
@@ -504,7 +603,7 @@ const DayPlannerWidget = () => {
             className="neumo-inset"
             sx={{
               position: 'relative',
-              height: 155,
+              height: 120,
               borderRadius: '16px',
               backgroundColor: '#F8F4FF',
               border: '1px solid rgba(124, 92, 252, 0.18)',
@@ -529,58 +628,83 @@ const DayPlannerWidget = () => {
               />
             ))}
 
-            {/* Live Moving Current Time Indicator */}
-            <Box
-              sx={{
-                position: 'absolute',
-                left: `${currentTimePct}%`,
-                top: 0,
-                bottom: 0,
-                width: '2px',
-                backgroundColor: '#FF7A59',
-                boxShadow: '0 0 10px #FF7A59',
-                zIndex: 10,
-                pointerEvents: 'none',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center'
+            {/* Live Moving Current Time Indicator Line with Hover Tooltip */}
+            <Tooltip
+              title={`Current Time: ${dayjs().format('HH:mm A')}`}
+              arrow
+              placement="top"
+              componentsProps={{
+                tooltip: {
+                  sx: {
+                    backgroundColor: '#1F2937',
+                    color: '#FFFFFF',
+                    fontWeight: 800,
+                    fontSize: '0.75rem',
+                    borderRadius: '8px',
+                    px: 1.2,
+                    py: 0.6
+                  }
+                }
               }}
             >
               <Box
                 sx={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: '50%',
+                  position: 'absolute',
+                  left: `${currentTimePct}%`,
+                  top: 0,
+                  bottom: 0,
+                  width: '3px',
                   backgroundColor: '#FF7A59',
-                  boxShadow: '0 0 8px #FF7A59',
-                  mt: -0.5
+                  boxShadow: '0 0 12px #FF7A59, 0 0 4px #FF7A59',
+                  zIndex: 25,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  transition: 'left 0.5s ease-out'
                 }}
-              />
-              <Chip
-                label={minutesToTime(currentTimeMinutes)}
-                size="small"
-                sx={{
-                  height: 18,
-                  fontSize: '0.625rem',
-                  backgroundColor: '#FF7A59',
-                  color: '#FFFFFF',
-                  fontWeight: 900,
-                  mt: 0.2,
-                  px: 0.3
-                }}
-              />
-            </Box>
+              >
+                <Box
+                  sx={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: '50%',
+                    backgroundColor: '#FF7A59',
+                    boxShadow: '0 0 10px #FF7A59',
+                    mt: -0.6
+                  }}
+                />
+                <Chip
+                  label={minutesToTime(currentTimeMinutes)}
+                  size="small"
+                  sx={{
+                    height: 18,
+                    fontSize: '0.625rem',
+                    backgroundColor: '#FF7A59',
+                    color: '#FFFFFF',
+                    fontWeight: 900,
+                    mt: 0.2,
+                    px: 0.3,
+                    boxShadow: '0 2px 6px rgba(255, 122, 89, 0.4)'
+                  }}
+                />
+              </Box>
+            </Tooltip>
 
-            {/* Render Activity Blocks (Full Height & 4 Spaced Layout Lines) */}
+            {/* Render Activity Blocks */}
             <AnimatePresence>
               {renderedSegments.map((seg) => {
                 const { task, realStartMin, totalDuration, leftPct, widthPct, segmentId, touchesLeftEdge, touchesRightEdge } = seg;
                 const categoryConfig = CATEGORY_COLORS[task.category] || CATEGORY_COLORS.work;
                 const isDraggingThis = dragState && dragState.taskId === task.id;
 
-                // Border radius calculation: default small 5px; container rounded edge if touching boundary
+                // Detect if task block contains current time (in-progress active task)
+                const realEndMin = realStartMin + totalDuration;
+                const isActiveNow = currentTimeMinutes >= realStartMin && currentTimeMinutes < realEndMin;
+
+                // Border radius calculation
                 const blockBorderRadius = {
-                  borderRadius: '5px',
+                  borderRadius: '10px',
                   ...(touchesLeftEdge && { borderTopLeftRadius: '16px', borderBottomLeftRadius: '16px' }),
                   ...(touchesRightEdge && { borderTopRightRadius: '16px', borderBottomRightRadius: '16px' })
                 };
@@ -588,17 +712,24 @@ const DayPlannerWidget = () => {
                 return (
                   <Tooltip
                     key={segmentId}
-                    title={<RichTooltipCard task={task} startMin={realStartMin} totalDuration={totalDuration} />}
+                    title={
+                      <RichTooltipCard
+                        task={task}
+                        startMin={realStartMin}
+                        totalDuration={totalDuration}
+                        isActiveNow={isActiveNow}
+                      />
+                    }
                     arrow
                     placement="top"
                     componentsProps={{
                       tooltip: {
                         sx: {
-                          backgroundColor: 'rgba(31, 41, 55, 0.95)',
-                          backdropFilter: 'blur(12px)',
-                          borderRadius: '14px',
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
-                          boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                          backgroundColor: 'rgba(31, 41, 55, 0.94)',
+                          backdropFilter: 'blur(16px)',
+                          borderRadius: '16px',
+                          border: '1px solid rgba(255, 255, 255, 0.22)',
+                          boxShadow: '0 16px 40px rgba(0, 0, 0, 0.35)',
                           p: 0
                         }
                       }
@@ -616,15 +747,20 @@ const DayPlannerWidget = () => {
                         top: 0,
                         bottom: 0,
                         height: '100%',
-                        zIndex: isDraggingThis ? 30 : 5
+                        zIndex: isDraggingThis ? 30 : isActiveNow ? 15 : 5
                       }}
                     >
                       <Box
                         onMouseDown={(e) => startDrag(e, task.id, 'move', realStartMin, totalDuration)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBlockSingleClick(task.id);
+                        }}
                         onDoubleClick={(e) => {
                           e.stopPropagation();
-                          setEditingTask(task);
+                          handleBlockDoubleClick(task);
                         }}
+                        className={isActiveNow ? 'active-task-glow' : ''}
                         sx={{
                           height: '100%',
                           ...blockBorderRadius,
@@ -635,9 +771,12 @@ const DayPlannerWidget = () => {
                           display: 'flex',
                           flexDirection: 'column',
                           justifyContent: 'space-between',
+                          alignItems: 'center',
                           cursor: isDraggingThis ? 'grabbing' : 'grab',
                           boxShadow: isDraggingThis
-                            ? '0 14px 32px rgba(124, 92, 252, 0.45), 0 0 0 2px #FFFFFF'
+                            ? '0 14px 32px rgba(124, 92, 252, 0.5), 0 0 0 2px #FFFFFF'
+                            : isActiveNow
+                            ? '0 0 20px rgba(255, 122, 89, 0.7)'
                             : '0 4px 12px rgba(124, 92, 252, 0.2)',
                           border: '1px solid rgba(255, 255, 255, 0.35)',
                           position: 'relative',
@@ -645,12 +784,12 @@ const DayPlannerWidget = () => {
                           opacity: task.completed ? 0.8 : 1,
                           transition: isDraggingThis ? 'none' : 'transform 0.15s ease, box-shadow 0.15s ease',
                           '&:hover': {
-                            boxShadow: '0 8px 22px rgba(124, 92, 252, 0.35)',
+                            boxShadow: '0 8px 24px rgba(124, 92, 252, 0.4)',
                             transform: 'translateY(-1px)'
                           }
                         }}
                       >
-                        {/* Visible Left Edge Resize Handle */}
+                        {/* Left Edge Resize Handle */}
                         <Box
                           onMouseDown={(e) => startDrag(e, task.id, 'resize-left', realStartMin, totalDuration)}
                           sx={{
@@ -665,115 +804,55 @@ const DayPlannerWidget = () => {
                             justifyContent: 'center',
                             backgroundColor: 'rgba(0, 0, 0, 0.18)',
                             transition: 'background-color 0.2s ease',
-                            zIndex: 14,
+                            zIndex: 18,
                             '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.5)' }
                           }}
                         >
-                          <GripVertical size={10} color="#FFFFFF" style={{ opacity: 0.8 }} />
+                          <GripVertical size={10} color="#FFFFFF" style={{ opacity: 0.85 }} />
                         </Box>
 
-                        {/* LINE 1: HEADING (Task Title HTML Marquee with bottom margin) */}
-                        <Box sx={{ px: 0.6, pt: 0.2, mb: 0.8, zIndex: 12, overflow: 'hidden', width: '100%' }}>
-                          <marquee
-                            behavior="scroll"
-                            direction="left"
-                            scrollamount="3"
-                            style={{
-                              color: '#FFFFFF',
-                              fontSize: '0.825rem',
-                              fontWeight: 800,
-                              width: '100%',
-                              display: 'block',
-                              textDecoration: task.completed ? 'line-through' : 'none',
-                              opacity: task.completed ? 0.85 : 1,
-                              textShadow: '0 1px 2px rgba(0,0,0,0.4)'
-                            }}
-                          >
-                            {task.title}
-                          </marquee>
+                        {/* Title ONLY with CSS Marquee overflow animation */}
+                        <Box
+                          sx={{
+                            width: '100%',
+                            px: 1,
+                            mt: 'auto',
+                            mb: 'auto',
+                            zIndex: 12,
+                            textAlign: 'center',
+                            overflow: 'hidden'
+                          }}
+                        >
+                          <div className="css-marquee-container">
+                            <div
+                              className={task.title.length > 18 ? 'css-marquee-track' : ''}
+                              style={{
+                                color: '#FFFFFF',
+                                fontSize: '0.85rem',
+                                fontWeight: 800,
+                                fontFamily: 'Outfit, sans-serif',
+                                textDecoration: task.completed ? 'line-through' : 'none',
+                                opacity: task.completed ? 0.85 : 1,
+                                textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)'
+                              }}
+                            >
+                              {task.title}
+                              {task.title.length > 18 && (
+                                <span style={{ marginLeft: 24, opacity: 0.8 }}>{task.title}</span>
+                              )}
+                            </div>
+                          </div>
                         </Box>
 
-                        {/* LINE 2: DESCRIPTION (Description HTML Marquee with bottom margin) */}
-                        <Box sx={{ px: 0.6, mb: 0.8, zIndex: 12, width: '100%', overflow: 'hidden' }}>
-                          <marquee
-                            behavior="scroll"
-                            direction="left"
-                            scrollamount="3"
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.95)',
-                              fontSize: '0.725rem',
-                              fontWeight: 600,
-                              width: '100%',
-                              display: 'block'
-                            }}
-                          >
-                            {task.description || `Focus activity for ${task.title}`}
-                          </marquee>
-                        </Box>
-
-                        {/* LINE 3: TIMING (Timing HTML Marquee with bottom margin) */}
-                        <Box sx={{ px: 0.6, mb: 0.8, zIndex: 12, width: '100%', overflow: 'hidden' }}>
-                          <marquee
-                            behavior="scroll"
-                            direction="left"
-                            scrollamount="3"
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.95)',
-                              fontSize: '0.725rem',
-                              fontWeight: 700,
-                              width: '100%',
-                              display: 'block'
-                            }}
-                          >
-                            ⏰ {formatTimeRange(task.time, totalDuration)} • 🏷️ {categoryConfig.label} • ⚡ {task.energy || 'Medium'} Focus
-                          </marquee>
-                        </Box>
-
-                        {/* LINE 4: ACTION BUTTONS (Checkin Icon, Edit Option, Delete Option at End) */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5, px: 0.6, pb: 0.2, pt: 0.4, zIndex: 12, width: '100%', mt: 'auto' }}>
-                          {/* Checkin / Mark Completed Button (Icon Only) */}
-                          <IconButton
-                            size="small"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              e.preventDefault();
-                              toggleTask(task.id);
-                            }}
-                            sx={{
-                              p: 0.4,
-                              color: '#FFFFFF',
-                              backgroundColor: 'rgba(0,0,0,0.22)',
-                              borderRadius: '4px',
-                              flexShrink: 0,
-                              '&:hover': { backgroundColor: 'rgba(255,255,255,0.3)' }
-                            }}
-                            title={task.completed ? "Mark as pending" : "Check in / Mark completed"}
-                          >
-                            {task.completed ? <CheckCircle2 size={13} color="#22C55E" /> : <Circle size={13} color="#FFFFFF" />}
-                          </IconButton>
-
-                          {/* Edit Option */}
-                          <IconButton
-                            size="small"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              e.preventDefault();
-                              setEditingTask(task);
-                            }}
-                            sx={{
-                              p: 0.4,
-                              color: 'rgba(255,255,255,0.95)',
-                              backgroundColor: 'rgba(0,0,0,0.22)',
-                              borderRadius: '4px',
-                              flexShrink: 0,
-                              '&:hover': { color: '#FFFFFF', backgroundColor: 'rgba(255,255,255,0.35)' }
-                            }}
-                            title="Edit Task"
-                          >
-                            <Pencil size={11} />
-                          </IconButton>
-
-                          {/* Delete Option */}
+                        {/* Bottom Right Single Delete Button */}
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            right: 6,
+                            bottom: 6,
+                            zIndex: 18
+                          }}
+                        >
                           <IconButton
                             size="small"
                             onClick={(e) => {
@@ -782,20 +861,19 @@ const DayPlannerWidget = () => {
                               deleteTask(task.id);
                             }}
                             sx={{
-                              p: 0.4,
-                              color: 'rgba(255,255,255,0.9)',
-                              backgroundColor: 'rgba(0,0,0,0.22)',
-                              borderRadius: '4px',
-                              flexShrink: 0,
-                              '&:hover': { color: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.3)' }
+                              p: 0.35,
+                              color: 'rgba(255, 255, 255, 0.9)',
+                              backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                              borderRadius: '6px',
+                              '&:hover': { color: '#EF4444', backgroundColor: 'rgba(239, 68, 68, 0.35)' }
                             }}
                             title="Delete Task"
                           >
-                            <Trash2 size={11} />
+                            <Trash2 size={12} />
                           </IconButton>
                         </Box>
 
-                        {/* Visible Right Edge Resize Handle */}
+                        {/* Right Edge Resize Handle */}
                         <Box
                           onMouseDown={(e) => startDrag(e, task.id, 'resize-right', realStartMin, totalDuration)}
                           sx={{
@@ -810,11 +888,11 @@ const DayPlannerWidget = () => {
                             justifyContent: 'center',
                             backgroundColor: 'rgba(0, 0, 0, 0.18)',
                             transition: 'background-color 0.2s ease',
-                            zIndex: 12,
+                            zIndex: 18,
                             '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.5)' }
                           }}
                         >
-                          <GripVertical size={10} color="#FFFFFF" style={{ opacity: 0.8 }} />
+                          <GripVertical size={10} color="#FFFFFF" style={{ opacity: 0.85 }} />
                         </Box>
                       </Box>
                     </motion.div>
@@ -840,7 +918,7 @@ const DayPlannerWidget = () => {
             px: 2.5,
             py: 1.2,
             borderRadius: '20px',
-            backgroundColor: 'rgba(31, 41, 55, 0.92)',
+            backgroundColor: 'rgba(31, 41, 55, 0.94)',
             color: '#FFFFFF',
             display: 'flex',
             alignItems: 'center',
@@ -871,6 +949,227 @@ const DayPlannerWidget = () => {
         onClose={() => setEditingTask(null)}
         task={editingTask}
       />
+
+      <Divider sx={{ my: 3, borderColor: 'rgba(124, 92, 252, 0.12)' }} />
+
+      {/* Dedicated "Planner Guide" & Energy Level Legend Section */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Info size={18} color="#7C5CFC" />
+          <Typography variant="subtitle1" sx={{ fontWeight: 800, fontFamily: 'Outfit', color: '#1F2937' }}>
+            Planner Guide & Interaction Legend
+          </Typography>
+        </Box>
+
+        {/* 2-Column Responsive Layout: Interactions on Left, Energy Legend on Right */}
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1.2fr 0.8fr' }, gap: 2 }}>
+          {/* Interaction Gestures */}
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: '30px',
+              backgroundColor: '#FFFFFF',
+              border: '1px solid rgba(124, 92, 252, 0.12)',
+              boxShadow: '3px 3px 10px rgba(124, 92, 252, 0.05), -3px -3px 8px #FFFFFF'
+            }}
+          >
+            <Typography variant="caption" sx={{ fontWeight: 800, color: '#7C5CFC', textTransform: 'uppercase', letterSpacing: '0.5px', mb: 1.5, display: 'block' }}>
+              GESTURE & TIMELINE CONTROLS
+            </Typography>
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex' }}>
+                  <MousePointer size={14} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
+                    Single Click
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
+                    Mark task Complete / Incomplete
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex' }}>
+                  <MousePointer size={14} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
+                    Double Click
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
+                    Open Edit Dialog to edit task
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex' }}>
+                  <Move size={14} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
+                    Drag Block
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
+                    Reposition entire task time window
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex' }}>
+                  <Maximize2 size={14} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
+                    Drag Edges
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
+                    Resize left/right edge to adjust duration
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex' }}>
+                  <Info size={14} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
+                    Hover Block
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
+                    View complete 9-property task popover
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: 'rgba(255, 122, 89, 0.15)', color: '#FF7A59', display: 'flex' }}>
+                  <Zap size={14} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
+                    Highlighted Task
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
+                    Orange glow = task currently in progress
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: 'rgba(255, 122, 89, 0.15)', color: '#FF7A59', display: 'flex' }}>
+                  <Clock size={14} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
+                    Current Time Line
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
+                    Real-time line indicator (Hover for exact time)
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: 'rgba(239, 68, 68, 0.12)', color: '#EF4444', display: 'flex' }}>
+                  <Trash2 size={14} />
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
+                    Delete Icon
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
+                    Click bottom-right icon to delete task
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Energy Level Legend */}
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: '30px',
+              backgroundColor: '#FFFFFF',
+              border: '1px solid rgba(124, 92, 252, 0.12)',
+              boxShadow: '3px 3px 10px rgba(124, 92, 252, 0.05), -3px -3px 8px #FFFFFF'
+            }}
+          >
+            <Typography variant="caption" sx={{ fontWeight: 800, color: '#7C5CFC', textTransform: 'uppercase', letterSpacing: '0.5px', mb: 1.5, display: 'block' }}>
+              ENERGY LEVEL LEGEND
+            </Typography>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 0.8, px: 1.2, borderRadius: 2, backgroundColor: 'rgba(34, 197, 94, 0.08)' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <span>🟢</span>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#15803D', fontSize: '0.785rem' }}>
+                    High Energy
+                  </Typography>
+                </Box>
+                <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem', fontWeight: 600 }}>
+                  Deep Work / Coding / Study
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 0.8, px: 1.2, borderRadius: 2, backgroundColor: 'rgba(245, 158, 11, 0.08)' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <span>🟡</span>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#B45309', fontSize: '0.785rem' }}>
+                    Medium Energy
+                  </Typography>
+                </Box>
+                <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem', fontWeight: 600 }}>
+                  Meetings / Planning / Learning
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 0.8, px: 1.2, borderRadius: 2, backgroundColor: 'rgba(249, 115, 22, 0.08)' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <span>🟠</span>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#C2410C', fontSize: '0.785rem' }}>
+                    Low Energy
+                  </Typography>
+                </Box>
+                <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem', fontWeight: 600 }}>
+                  Routine / Admin / Chores
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 0.8, px: 1.2, borderRadius: 2, backgroundColor: 'rgba(59, 130, 246, 0.08)' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <span>🔵</span>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1D4ED8', fontSize: '0.785rem' }}>
+                    Recovery
+                  </Typography>
+                </Box>
+                <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem', fontWeight: 600 }}>
+                  Break / Lunch / Meditation
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 0.8, px: 1.2, borderRadius: 2, backgroundColor: 'rgba(139, 92, 246, 0.08)' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <span>🌙</span>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#6D28D9', fontSize: '0.785rem' }}>
+                    Rest
+                  </Typography>
+                </Box>
+                <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem', fontWeight: 600 }}>
+                  Sleep / Wind-down
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
     </NeumoCard>
   );
 };

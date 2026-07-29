@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Box, Typography, Chip } from '@mui/material';
@@ -19,6 +19,23 @@ const DashboardPage = () => {
 
   const currentArchetypeObj = USER_ARCHETYPES.find((a) => a.id === archetype) || USER_ARCHETYPES[0];
   const pendingCount = tasks.filter((t) => !t.completed).length;
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const isA = e.key && e.key.toLowerCase() === 'a';
+      const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName) || document.activeElement?.isContentEditable;
+      
+      if (isA && (e.altKey || (!isInput && e.shiftKey))) {
+        e.preventDefault();
+        if (onOpenQuickAdd) {
+          onOpenQuickAdd();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onOpenQuickAdd]);
 
   return (
     <motion.div
@@ -67,22 +84,42 @@ const DashboardPage = () => {
           </Typography>
         </Box>
 
-        {/* Quick Action FAB / Button */}
+        {/* Quick Action FAB / Button with Keyboard Shortcut Badge */}
         <button
           onClick={onOpenQuickAdd}
           className="skeuo-btn"
+          title="Add Activity (Shortcut: Alt + A)"
           style={{
-            padding: '12px 24px',
+            padding: '10px 20px',
             borderRadius: '16px',
             background: 'linear-gradient(145deg, #FFFFFF, #F4EEFF)',
             color: '#7C5CFC',
             boxShadow: '0px 4px 0px #D8B4FE, 0px 8px 20px rgba(0, 0, 0, 0.15)',
             border: '1px solid rgba(255, 255, 255, 0.9)',
             fontWeight: 800,
-            fontSize: '0.9rem'
+            fontSize: '0.9rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '10px',
+            cursor: 'pointer'
           }}
         >
-          + Add Activity
+          <span>+ Add Activity</span>
+          <span
+            style={{
+              fontSize: '0.725rem',
+              fontWeight: 700,
+              padding: '2px 8px',
+              borderRadius: '8px',
+              backgroundColor: 'rgba(124, 92, 252, 0.12)',
+              color: '#7C5CFC',
+              border: '1px solid rgba(124, 92, 252, 0.25)',
+              letterSpacing: '0.3px',
+              fontFamily: 'monospace'
+            }}
+          >
+            Alt+A
+          </span>
         </button>
       </Box>
 

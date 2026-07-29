@@ -1,28 +1,52 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Box, Typography, TextField, MenuItem } from '@mui/material';
-import { Pencil, Check, Zap } from 'lucide-react';
+import { Check, Zap } from 'lucide-react';
 import GlassModal from '../Common/GlassModal';
 import SkeuoButton from '../Common/SkeuoButton';
 import { usePlannerStore } from '../../store/usePlannerStore';
 import { CATEGORY_COLORS } from '../../constants/plannerData';
 
-const ENERGY_LEVELS = ['High', 'Medium', 'Low'];
+const ENERGY_LEVELS = [
+  { value: 'High', label: '🟢 High Energy (Deep Work / Coding / Study)' },
+  { value: 'Medium', label: '🟡 Medium Energy (Meetings / Planning / Learning)' },
+  { value: 'Low', label: '🟠 Low Energy (Routine / Admin / Chores)' },
+  { value: 'Recovery', label: '🔵 Recovery (Break / Lunch / Meditation)' },
+  { value: 'Rest', label: '🌙 Rest (Sleep / Wind-down)' }
+];
+
+const PRIORITY_LEVELS = ['High', 'Medium', 'Low'];
 
 const EditTaskModal = ({ open, onClose, task }) => {
   const { updateTaskDetails } = usePlannerStore();
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm();
+
+  const categoryValue = watch('category');
+  const energyValue = watch('energy');
+  const priorityValue = watch('priority');
 
   useEffect(() => {
     if (task) {
-      setValue('title', task.title || '');
-      setValue('description', task.description || '');
-      setValue('time', task.time || '10:00');
-      setValue('duration', task.duration || 45);
-      setValue('category', task.category || 'work');
-      setValue('energy', task.energy || 'Medium');
+      let energyVal = task.energy || 'Medium';
+      if (typeof energyVal === 'string') {
+        if (energyVal.includes('High')) energyVal = 'High';
+        else if (energyVal.includes('Low')) energyVal = 'Low';
+        else if (energyVal.includes('Recovery')) energyVal = 'Recovery';
+        else if (energyVal.includes('Rest')) energyVal = 'Rest';
+        else if (energyVal.includes('Medium')) energyVal = 'Medium';
+      }
+
+      reset({
+        title: task.title || '',
+        description: task.description || '',
+        time: task.time || '10:00',
+        duration: task.duration || 45,
+        category: task.category || 'work',
+        energy: energyVal,
+        priority: task.priority || 'Medium'
+      });
     }
-  }, [task, setValue]);
+  }, [task, reset]);
 
   const onSubmit = (data) => {
     if (!task) return;
@@ -32,16 +56,16 @@ const EditTaskModal = ({ open, onClose, task }) => {
       time: data.time,
       duration: parseInt(data.duration, 10) || 45,
       category: data.category,
-      energy: data.energy
+      energy: data.energy,
+      priority: data.priority
     });
-    reset();
     onClose();
   };
 
   if (!task) return null;
 
   return (
-    <GlassModal open={open} onClose={onClose} title="Edit Task Details" maxWidth={500}>
+    <GlassModal open={open} onClose={onClose} title="Edit Task Details" maxWidth={520}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: 1 }}>
           {/* Task Title */}
@@ -50,6 +74,7 @@ const EditTaskModal = ({ open, onClose, task }) => {
             label="Task Name"
             variant="outlined"
             placeholder="e.g., Q3 Product Roadmap Review"
+            InputLabelProps={{ shrink: true }}
             {...register('title', { required: 'Task name is required' })}
             error={Boolean(errors.title)}
             helperText={errors.title?.message}
@@ -63,6 +88,7 @@ const EditTaskModal = ({ open, onClose, task }) => {
             label="Task Description & Notes"
             variant="outlined"
             placeholder="Detailed notes or focus objectives..."
+            InputLabelProps={{ shrink: true }}
             {...register('description')}
           />
 
@@ -80,6 +106,7 @@ const EditTaskModal = ({ open, onClose, task }) => {
               label="Duration (mins)"
               type="number"
               inputProps={{ min: 15, max: 720, step: 15 }}
+              InputLabelProps={{ shrink: true }}
               {...register('duration', { required: 'Duration is required' })}
             />
           </Box>
@@ -89,6 +116,8 @@ const EditTaskModal = ({ open, onClose, task }) => {
             select
             fullWidth
             label="Category"
+            value={categoryValue || 'work'}
+            InputLabelProps={{ shrink: true }}
             {...register('category')}
           >
             {Object.entries(CATEGORY_COLORS).map(([key, val]) => (
@@ -103,24 +132,42 @@ const EditTaskModal = ({ open, onClose, task }) => {
             ))}
           </TextField>
 
-          {/* Energy Focus Level */}
-          <TextField
-            select
-            fullWidth
-            label="Energy Focus Level"
-            {...register('energy')}
-          >
-            {ENERGY_LEVELS.map((lvl) => (
-              <MenuItem key={lvl} value={lvl}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Zap size={14} color="#F59E0B" />
+          {/* Energy Focus Level & Priority Row */}
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField
+              select
+              fullWidth
+              label="Energy Focus Level"
+              value={energyValue || 'Medium'}
+              InputLabelProps={{ shrink: true }}
+              {...register('energy')}
+            >
+              {ENERGY_LEVELS.map((item) => (
+                <MenuItem key={item.value} value={item.value}>
                   <Typography variant="body2" sx={{ fontWeight: 700, color: '#1F2937' }}>
-                    {lvl} Focus
+                    {item.label}
                   </Typography>
-                </Box>
-              </MenuItem>
-            ))}
-          </TextField>
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              select
+              fullWidth
+              label="Priority Level"
+              value={priorityValue || 'Medium'}
+              InputLabelProps={{ shrink: true }}
+              {...register('priority')}
+            >
+              {PRIORITY_LEVELS.map((p) => (
+                <MenuItem key={p} value={p}>
+                  <Typography variant="body2" sx={{ fontWeight: 700, color: '#1F2937' }}>
+                    {p} Priority
+                  </Typography>
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
 
           {/* Action Controls */}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1.5, mt: 1.5 }}>

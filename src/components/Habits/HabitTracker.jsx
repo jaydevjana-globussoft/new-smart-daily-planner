@@ -58,7 +58,7 @@ const HabitTracker = ({ onOpenQuickAdd }) => {
               <Box
                 sx={{
                   p: 2.2,
-                  borderRadius: 3.5,
+                  borderRadius: '30px',
                   backgroundColor: '#FFFFFF',
                   border: '1px solid rgba(124, 92, 252, 0.12)',
                   boxShadow: '4px 4px 12px rgba(124, 92, 252, 0.06), -4px -4px 10px #FFFFFF',
