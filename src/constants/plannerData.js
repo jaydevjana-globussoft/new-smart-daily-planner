@@ -129,20 +129,26 @@ export const INITIAL_AI_SUGGESTIONS = [
     title: 'High Focus Window Detected',
     description: 'Based on your energy patterns, 10:00 AM - 12:00 PM is optimal for your "Deep Work: Product Roadmap" task.',
     actionLabel: 'Lock Schedule',
-    category: 'work'
+    category: 'work',
+    priority: 'high',
+    tag: '⚡ Focus Optimizer'
   },
   {
     id: 's2',
     title: 'Hydration & Stretch Alert',
     description: 'You have been sitting for 90 minutes. Take a 5-minute break and log a glass of water.',
     actionLabel: 'Log Hydration',
-    category: 'health'
+    category: 'health',
+    priority: 'medium',
+    tag: '💧 Wellness AI'
   },
   {
     id: 's3',
     title: 'Evening Wind-down Routine',
     description: 'Schedule a 20-minute digital detox before bed at 10:00 PM to improve sleep quality by 25%.',
     actionLabel: 'Add to Schedule',
-    category: 'personal'
+    category: 'personal',
+    priority: 'low',
+    tag: '🌙 Circadian Sync'
   }
 ];

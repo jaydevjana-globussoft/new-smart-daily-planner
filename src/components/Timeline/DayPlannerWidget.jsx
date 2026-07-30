@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import NeumoCard from '../Common/NeumoCard';
 import EditTaskModal from '../QuickActions/EditTaskModal';
+import PlannerGuideSection from './PlannerGuideSection';
 import { usePlannerStore } from '../../store/usePlannerStore';
 import { CATEGORY_COLORS } from '../../constants/plannerData';
 
@@ -442,9 +443,9 @@ const DayPlannerWidget = () => {
   });
 
   return (
-    <NeumoCard sx={{ p: { xs: 2.5, md: 3.5 } }}>
+    <NeumoCard sx={{ p: { xs: 2, md: 2.25 } }}>
       {/* Widget Header */}
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, justifyContent: 'space-between', gap: 2, mb: 3 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, justifyContent: 'space-between', gap: 1.5, mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ p: 1, borderRadius: 2.5, background: 'linear-gradient(135deg, #7C5CFC, #A855F7)', color: '#FFFFFF' }}>
             <Clock size={22} />
@@ -952,224 +953,8 @@ const DayPlannerWidget = () => {
 
       <Divider sx={{ my: 3, borderColor: 'rgba(124, 92, 252, 0.12)' }} />
 
-      {/* Dedicated "Planner Guide" & Energy Level Legend Section */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Info size={18} color="#7C5CFC" />
-          <Typography variant="subtitle1" sx={{ fontWeight: 800, fontFamily: 'Outfit', color: '#1F2937' }}>
-            Planner Guide & Interaction Legend
-          </Typography>
-        </Box>
-
-        {/* 2-Column Responsive Layout: Interactions on Left, Energy Legend on Right */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1.2fr 0.8fr' }, gap: 2 }}>
-          {/* Interaction Gestures */}
-          <Box
-            sx={{
-              p: 2,
-              borderRadius: '30px',
-              backgroundColor: '#FFFFFF',
-              border: '1px solid rgba(124, 92, 252, 0.12)',
-              boxShadow: '3px 3px 10px rgba(124, 92, 252, 0.05), -3px -3px 8px #FFFFFF'
-            }}
-          >
-            <Typography variant="caption" sx={{ fontWeight: 800, color: '#7C5CFC', textTransform: 'uppercase', letterSpacing: '0.5px', mb: 1.5, display: 'block' }}>
-              GESTURE & TIMELINE CONTROLS
-            </Typography>
-
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex' }}>
-                  <MousePointer size={14} />
-                </Box>
-                <Box>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
-                    Single Click
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
-                    Mark task Complete / Incomplete
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex' }}>
-                  <MousePointer size={14} />
-                </Box>
-                <Box>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
-                    Double Click
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
-                    Open Edit Dialog to edit task
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex' }}>
-                  <Move size={14} />
-                </Box>
-                <Box>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
-                    Drag Block
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
-                    Reposition entire task time window
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex' }}>
-                  <Maximize2 size={14} />
-                </Box>
-                <Box>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
-                    Drag Edges
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
-                    Resize left/right edge to adjust duration
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: '#F4EEFF', color: '#7C5CFC', display: 'flex' }}>
-                  <Info size={14} />
-                </Box>
-                <Box>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
-                    Hover Block
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
-                    View complete 9-property task popover
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: 'rgba(255, 122, 89, 0.15)', color: '#FF7A59', display: 'flex' }}>
-                  <Zap size={14} />
-                </Box>
-                <Box>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
-                    Highlighted Task
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
-                    Orange glow = task currently in progress
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: 'rgba(255, 122, 89, 0.15)', color: '#FF7A59', display: 'flex' }}>
-                  <Clock size={14} />
-                </Box>
-                <Box>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
-                    Current Time Line
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
-                    Real-time line indicator (Hover for exact time)
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-                <Box sx={{ p: 0.8, borderRadius: 2, backgroundColor: 'rgba(239, 68, 68, 0.12)', color: '#EF4444', display: 'flex' }}>
-                  <Trash2 size={14} />
-                </Box>
-                <Box>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1F2937', display: 'block' }}>
-                    Delete Icon
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem' }}>
-                    Click bottom-right icon to delete task
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Box>
-
-          {/* Energy Level Legend */}
-          <Box
-            sx={{
-              p: 2,
-              borderRadius: '30px',
-              backgroundColor: '#FFFFFF',
-              border: '1px solid rgba(124, 92, 252, 0.12)',
-              boxShadow: '3px 3px 10px rgba(124, 92, 252, 0.05), -3px -3px 8px #FFFFFF'
-            }}
-          >
-            <Typography variant="caption" sx={{ fontWeight: 800, color: '#7C5CFC', textTransform: 'uppercase', letterSpacing: '0.5px', mb: 1.5, display: 'block' }}>
-              ENERGY LEVEL LEGEND
-            </Typography>
-
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 0.8, px: 1.2, borderRadius: 2, backgroundColor: 'rgba(34, 197, 94, 0.08)' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>🟢</span>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#15803D', fontSize: '0.785rem' }}>
-                    High Energy
-                  </Typography>
-                </Box>
-                <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem', fontWeight: 600 }}>
-                  Deep Work / Coding / Study
-                </Typography>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 0.8, px: 1.2, borderRadius: 2, backgroundColor: 'rgba(245, 158, 11, 0.08)' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>🟡</span>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#B45309', fontSize: '0.785rem' }}>
-                    Medium Energy
-                  </Typography>
-                </Box>
-                <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem', fontWeight: 600 }}>
-                  Meetings / Planning / Learning
-                </Typography>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 0.8, px: 1.2, borderRadius: 2, backgroundColor: 'rgba(249, 115, 22, 0.08)' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>🟠</span>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#C2410C', fontSize: '0.785rem' }}>
-                    Low Energy
-                  </Typography>
-                </Box>
-                <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem', fontWeight: 600 }}>
-                  Routine / Admin / Chores
-                </Typography>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 0.8, px: 1.2, borderRadius: 2, backgroundColor: 'rgba(59, 130, 246, 0.08)' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>🔵</span>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#1D4ED8', fontSize: '0.785rem' }}>
-                    Recovery
-                  </Typography>
-                </Box>
-                <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem', fontWeight: 600 }}>
-                  Break / Lunch / Meditation
-                </Typography>
-              </Box>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 0.8, px: 1.2, borderRadius: 2, backgroundColor: 'rgba(139, 92, 246, 0.08)' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <span>🌙</span>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: '#6D28D9', fontSize: '0.785rem' }}>
-                    Rest
-                  </Typography>
-                </Box>
-                <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem', fontWeight: 600 }}>
-                  Sleep / Wind-down
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+      {/* Dedicated "Planner Guide" & Energy Level Legend Section with GSAP ScrollTrigger */}
+      <PlannerGuideSection />
     </NeumoCard>
   );
 };

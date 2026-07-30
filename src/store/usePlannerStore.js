@@ -136,7 +136,8 @@ export const usePlannerStore = create(
         archetype: state.archetype,
         tasks: state.tasks,
         habits: state.habits,
-        goals: state.goals
+        goals: state.goals,
+        sidebarCollapsed: state.sidebarCollapsed
       })
     }
   )
