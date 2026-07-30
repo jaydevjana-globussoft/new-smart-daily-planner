@@ -195,3 +195,82 @@ h1, h2, h3, h4, h5, h6 {
 .ai-glow {
   animation: pulseGlow 2.5s infinite ease-in-out;
 }
+
+/* AI Smart Suggestions Dashboard Styling & Keyframes */
+@keyframes gradientBorderLoop {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes ambientGlowFloat {
+  0% { transform: translate(0px, 0px) scale(1); opacity: 0.7; }
+  50% { transform: translate(30px, -20px) scale(1.1); opacity: 0.9; }
+  100% { transform: translate(-20px, 15px) scale(0.95); opacity: 0.7; }
+}
+
+@keyframes aiOrbBreathing {
+  0% { transform: scale(1); box-shadow: 0 0 12px rgba(124, 92, 252, 0.4), inset 0 0 8px rgba(255, 255, 255, 0.6); }
+  50% { transform: scale(1.08); box-shadow: 0 0 24px rgba(168, 85, 247, 0.75), inset 0 0 14px rgba(255, 255, 255, 0.9); }
+  100% { transform: scale(1); box-shadow: 0 0 12px rgba(124, 92, 252, 0.4), inset 0 0 8px rgba(255, 255, 255, 0.6); }
+}
+
+@keyframes liveDotPulse {
+  0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  70% { transform: scale(1.2); opacity: 0.8; box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+@keyframes sparkleTwinkle {
+  0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; }
+  25% { transform: scale(1.1) rotate(90deg); opacity: 1; }
+  50% { transform: scale(0.8) rotate(180deg); opacity: 0.6; }
+  75% { transform: scale(1.2) rotate(270deg); opacity: 1; }
+}
+
+@keyframes skeuoShineSweep {
+  0% { transform: translateX(-150%) rotate(25deg); }
+  25% { transform: translateX(250%) rotate(25deg); }
+  100% { transform: translateX(250%) rotate(25deg); }
+}
+
+.ai-gradient-border-wrap {
+  background: linear-gradient(135deg, #7C5CFC, #3B82F6, #EC4899, #A855F7, #7C5CFC);
+  background-size: 300% 300%;
+  animation: gradientBorderLoop 12s ease infinite;
+  border-radius: 26px;
+  padding: 2px;
+  box-shadow: 0 12px 36px rgba(124, 92, 252, 0.12);
+  position: relative;
+}
+
+.skeuo-btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeuo-btn-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 40px;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: skeuoShineSweep 3.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes badgeGlowPulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(124, 92, 252, 0.15); border-color: rgba(124, 92, 252, 0.25); }
+  50% { box-shadow: 0 0 10px rgba(124, 92, 252, 0.4); border-color: rgba(124, 92, 252, 0.5); }
+}
+
+.category-badge-glow {
+  animation: badgeGlowPulse 3.5s infinite ease-in-out;
+}

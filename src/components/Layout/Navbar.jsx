@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, IconButton, Badge, Menu as MuiMenu, MenuItem, Tooltip, Chip } from '@mui/material';
-import { Sparkles, Bell, Command, Check, Layers, Menu as MenuIcon, Plus } from 'lucide-react';
+import { Sparkles, Bell, Command, Check, Layers, Plus, Search } from 'lucide-react';
 import { usePlannerStore } from '../../store/usePlannerStore';
 import { useAIStore } from '../../store/useAIStore';
 import { USER_ARCHETYPES } from '../../constants/plannerData';
 import NotificationCenter from '../Notifications/NotificationCenter';
 
-const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd, onToggleMobileNav }) => {
-  const { archetype, setArchetype, notifications, sidebarCollapsed, toggleSidebar } = usePlannerStore();
+const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd }) => {
+  const { archetype, setArchetype, notifications } = usePlannerStore();
   const { toggleOpen: toggleAIOpen, isOpen: isAIOpen } = useAIStore();
 
   const [archetypeMenuAnchor, setArchetypeMenuAnchor] = useState(null);
@@ -20,14 +20,6 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd, onToggleMobileNav }) => 
     }
   }, []);
 
-  const handleToggle = () => {
-    if (typeof window !== 'undefined' && window.innerWidth < 900) {
-      if (onToggleMobileNav) onToggleMobileNav();
-    } else {
-      toggleSidebar();
-    }
-  };
-
   const currentArchetypeObj = USER_ARCHETYPES.find((a) => a.id === archetype) || USER_ARCHETYPES[0];
   const unreadNotifs = notifications.filter((n) => !n.read).length;
 
@@ -38,55 +30,41 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd, onToggleMobileNav }) => 
         position: 'sticky',
         top: 0,
         zIndex: 1100,
-        px: { xs: 1.5, sm: 3, md: 4 },
-        py: 1.5,
+        px: { xs: 2, sm: 3.5, md: 5 },
+        py: 0.8,
+        height: 62,
+        minHeight: 62,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: '100%'
+        width: '100%',
+        boxSizing: 'border-box',
+        gap: { xs: 1.5, sm: 2, md: 3 }
       }}
     >
-      {/* Brand & Sidebar Toggle */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
-        <Tooltip title={sidebarCollapsed ? "Expand Navigation Bar" : "Collapse Navigation Bar"}>
-          <IconButton
-            onClick={handleToggle}
-            sx={{
-              color: '#1F2937',
-              backgroundColor: '#FFFFFF',
-              boxShadow: '3px 3px 8px rgba(124, 92, 252, 0.08), -3px -3px 8px #FFFFFF',
-              border: '1px solid rgba(124, 92, 252, 0.15)',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                backgroundColor: '#7C5CFC',
-                color: '#FFFFFF'
-              }
-            }}
-          >
-            <MenuIcon size={20} />
-          </IconButton>
-        </Tooltip>
-
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      {/* Brand Logo & User Role Persona Switcher Group */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5, md: 2 }, flexShrink: 0 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
           <Box
             sx={{
-              width: 40,
-              height: 40,
-              borderRadius: 3,
+              width: 38,
+              height: 38,
+              borderRadius: '12px',
               background: 'linear-gradient(135deg, #7C5CFC, #A855F7)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 14px rgba(124, 92, 252, 0.35)'
+              boxShadow: '0 4px 14px rgba(124, 92, 252, 0.35)',
+              flexShrink: 0
             }}
           >
-            <Sparkles size={22} color="#ffffff" />
+            <Sparkles size={20} color="#ffffff" />
           </Box>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: -0.5, lineHeight: 1, color: '#1F2937' }}>
+            <Typography variant="h6" sx={{ fontWeight: 800, fontFamily: 'Outfit', letterSpacing: -0.5, lineHeight: 1, color: '#1F2937', fontSize: { sm: '0.95rem', md: '1.05rem' } }}>
               Smart <span style={{ color: '#7C5CFC' }}>Daily Planner</span>
             </Typography>
-            <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.75rem', fontWeight: 600 }}>
+            <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.725rem', fontWeight: 600, display: 'block', mt: 0.1 }}>
               AI Lifestyle Assistant
             </Typography>
           </Box>
@@ -95,7 +73,7 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd, onToggleMobileNav }) => 
         {/* Archetype Quick Switcher Chip */}
         <Tooltip title="Switch lifestyle persona anytime - zero onboarding required!">
           <Chip
-            icon={<Layers size={14} style={{ color: '#7C5CFC' }} />}
+            icon={<Layers size={13} style={{ color: '#7C5CFC' }} />}
             label={currentArchetypeObj.label}
             onClick={(e) => setArchetypeMenuAnchor(e.currentTarget)}
             className="skeuo-chip"
@@ -104,10 +82,19 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd, onToggleMobileNav }) => 
               color: '#1F2937',
               border: '1px solid rgba(124, 92, 252, 0.2)',
               fontWeight: 700,
-              height: 36,
-              fontSize: '0.825rem',
+              height: 38,
+              fontSize: { xs: '0.75rem', md: '0.8rem' },
               boxShadow: '3px 3px 8px rgba(124, 92, 252, 0.08), -3px -3px 8px #FFFFFF',
-              '&:hover': { backgroundColor: '#F4EEFF', borderColor: '#7C5CFC' }
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: '#F4EEFF',
+                borderColor: '#7C5CFC',
+                transform: 'translateY(-2px)',
+                boxShadow: '4px 6px 12px rgba(124, 92, 252, 0.12)'
+              },
+              '&:active': {
+                transform: 'scale(0.97)'
+              }
             }}
           />
         </Tooltip>
@@ -156,7 +143,7 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd, onToggleMobileNav }) => 
         </MuiMenu>
       </Box>
 
-      {/* Center Search / Command Palette shortcut */}
+      {/* Flexible Center Search / Command Palette Bar */}
       <Box
         onClick={onOpenCommandPalette}
         className="neumo-inset"
@@ -165,49 +152,105 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd, onToggleMobileNav }) => 
           alignItems: 'center',
           gap: 1.5,
           px: 2,
-          py: 0.9,
+          height: 38,
           cursor: 'pointer',
-          width: 320,
+          flex: '1 1 auto',
+          minWidth: { md: 220, lg: 280 },
+          maxWidth: 480,
           color: '#4B5563',
           backgroundColor: '#F8F4FF',
           border: '1px solid rgba(124, 92, 252, 0.15)',
-          transition: 'all 0.2s ease',
-          '&:hover': { color: '#1F2937', borderColor: '#7C5CFC', backgroundColor: '#FFFFFF' }
+          borderRadius: '12px',
+          boxSizing: 'border-box',
+          transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+          '&:hover': {
+            color: '#1F2937',
+            borderColor: '#7C5CFC',
+            backgroundColor: '#FFFFFF',
+            transform: 'translateY(-1px)',
+            boxShadow: '0 4px 12px rgba(124, 92, 252, 0.1)'
+          }
         }}
       >
         <Command size={16} color="#7C5CFC" />
-        <Typography variant="body2" sx={{ fontSize: '0.85rem', flexGrow: 1, fontWeight: 600 }}>
+        <Typography variant="body2" sx={{ fontSize: '0.825rem', flexGrow: 1, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden' }}>
           Quick Search / Commands...
         </Typography>
-        <Chip label={isMac ? "Cmd + K" : "Ctrl + K"} size="small" sx={{ height: 22, fontSize: '0.675rem', backgroundColor: '#F4EEFF', color: '#7C5CFC', fontWeight: 800 }} />
+        <Chip
+          label={isMac ? "Cmd + K" : "Ctrl + K"}
+          size="small"
+          sx={{
+            height: 22,
+            fontSize: '0.675rem',
+            backgroundColor: '#F4EEFF',
+            color: '#7C5CFC',
+            fontWeight: 800,
+            borderRadius: '6px'
+          }}
+        />
       </Box>
 
-      {/* Action Controls */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.8, sm: 1.5 } }}>
+      {/* Mobile Search Icon Button */}
+      <IconButton
+        onClick={onOpenCommandPalette}
+        sx={{
+          display: { xs: 'flex', md: 'none' },
+          width: 38,
+          height: 38,
+          color: '#7C5CFC',
+          backgroundColor: '#F8F4FF',
+          border: '1px solid rgba(124, 92, 252, 0.15)',
+          borderRadius: '12px'
+        }}
+      >
+        <Search size={18} />
+      </IconButton>
+
+      {/* Action Controls Group with Equal Height & Precise Spacing */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.8, sm: 1.2, md: 1.5 }, flexShrink: 0 }}>
         {/* Quick Add Button */}
         <button
           onClick={onOpenQuickAdd}
           className="skeuo-btn"
           style={{
-            padding: '8px 14px',
-            fontSize: '0.85rem',
+            height: '38px',
+            padding: '0 14px',
+            fontSize: '0.825rem',
             background: 'linear-gradient(145deg, #22C55E, #16A34A)',
-            boxShadow: '0px 4px 0px #15803D, 0px 6px 14px rgba(34, 197, 94, 0.3)'
+            boxShadow: '0px 3px 0px #15803D, 0px 5px 12px rgba(34, 197, 94, 0.28)',
+            borderRadius: '12px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
         >
           <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>+ Quick Add</Box>
           <Box sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center' }}><Plus size={16} /></Box>
         </button>
 
-        {/* Notifications Icon */}
+        {/* Notifications Icon Button */}
         <IconButton
           onClick={(e) => setNotifAnchor(e.currentTarget)}
           sx={{
+            width: 38,
+            height: 38,
             color: '#1F2937',
             backgroundColor: '#FFFFFF',
             border: '1px solid rgba(124, 92, 252, 0.15)',
+            borderRadius: '12px',
             boxShadow: '3px 3px 8px rgba(124, 92, 252, 0.08), -3px -3px 8px #FFFFFF',
-            '&:hover': { backgroundColor: '#F4EEFF', color: '#7C5CFC' }
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            '&:hover': {
+              backgroundColor: '#F4EEFF',
+              color: '#7C5CFC',
+              borderColor: '#7C5CFC',
+              transform: 'translateY(-2px)'
+            },
+            '&:active': {
+              transform: 'scale(0.97)'
+            }
           }}
         >
           <Badge badgeContent={unreadNotifs} color="error">
@@ -226,14 +269,22 @@ const Navbar = ({ onOpenCommandPalette, onOpenQuickAdd, onToggleMobileNav }) => 
           onClick={toggleAIOpen}
           className={`skeuo-btn ${!isAIOpen ? 'ai-glow' : ''}`}
           style={{
-            padding: '8px 16px',
-            fontSize: '0.85rem',
+            height: '38px',
+            padding: '0 14px',
+            fontSize: '0.825rem',
             background: isAIOpen
               ? 'linear-gradient(145deg, #FF7A59, #E55C3A)'
               : 'linear-gradient(145deg, #7C5CFC, #6366F1)',
             boxShadow: isAIOpen
-              ? '0px 4px 0px #C74223, 0px 6px 14px rgba(255, 122, 89, 0.35)'
-              : '0px 4px 0px #4F32C9, 0px 6px 14px rgba(124, 92, 252, 0.35)'
+              ? '0px 3px 0px #C74223, 0px 5px 12px rgba(255, 122, 89, 0.3)'
+              : '0px 3px 0px #4F32C9, 0px 5px 12px rgba(124, 92, 252, 0.3)',
+            borderRadius: '12px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            cursor: 'pointer',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
         >
           <Sparkles size={16} />

@@ -24,17 +24,26 @@ const DashboardLayout = () => {
         onToggleMobileNav={() => setIsMobileNavOpen((prev) => !prev)}
       />
 
-      {/* Main Container */}
-      <Container maxWidth="xl" sx={{ mt: { xs: 2, md: 3 }, mb: { xs: 4, md: 6 }, flexGrow: 1, px: { xs: 1.5, sm: 3, md: 4 } }}>
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
-          {/* Desktop Sidebar (Rendered inline on md+ screens when sidebarCollapsed is false) */}
-          {!sidebarCollapsed && (
-            <Box sx={{ display: { xs: 'none', md: 'block' }, transition: 'all 0.3s ease' }}>
-              <Sidebar />
-            </Box>
-          )}
+      {/* Main Container (Max Width 1760px, 90% viewport fill on 1920x1080 displays) */}
+      <Container
+        maxWidth={false}
+        sx={{
+          maxWidth: '1760px',
+          width: '100%',
+          mx: 'auto',
+          px: { xs: 2, sm: 3, md: 4, lg: 5 },
+          mt: { xs: 1.5, md: 2 },
+          mb: { xs: 3, md: 5 },
+          flexGrow: 1
+        }}
+      >
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: { xs: 2, md: 3 } }}>
+          {/* Desktop Sidebar (GSAP animated width: 240px ↔ 76px) */}
+          <Box sx={{ display: { xs: 'none', md: 'block' }, flexShrink: 0 }}>
+            <Sidebar />
+          </Box>
 
-          {/* Page Content (Expands to fill 100% width when desktop sidebar is hidden) */}
+          {/* Page Content */}
           <Box sx={{ flexGrow: 1, minWidth: 0, width: '100%', transition: 'all 0.3s ease' }}>
             <Outlet context={{ onOpenQuickAdd: () => setIsQuickAddOpen(true) }} />
           </Box>

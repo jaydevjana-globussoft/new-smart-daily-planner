@@ -42,27 +42,29 @@ const DashboardPage = () => {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
+      style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}
     >
-      {/* Dynamic Welcome & Lifestyle Persona Header */}
+      {/* Today's Flow Banner (Height ~150px, 32px Internal Padding, Matches Content Width) */}
       <Box
         className="neumo-card"
         sx={{
-          p: { xs: 3, md: 4 },
-          borderRadius: { xs: 5, md: 7 },
+          minHeight: '150px',
+          p: { xs: 2.5, md: 4 },
+          borderRadius: '22px',
           background: 'linear-gradient(135deg, #7C5CFC 0%, #A855F7 50%, #FF7A59 100%)',
-          boxShadow: '0 20px 40px -10px rgba(124, 92, 252, 0.35)',
+          boxShadow: '0 16px 32px -8px rgba(124, 92, 252, 0.32)',
           border: '1px solid rgba(255, 255, 255, 0.3)',
           display: 'flex',
           flexDirection: { xs: 'column', sm: 'row' },
           alignItems: { xs: 'flex-start', sm: 'center' },
           justifyContent: 'space-between',
-          gap: 2.5
+          gap: 2.5,
+          boxSizing: 'border-box'
         }}
       >
         <Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1, flexWrap: 'wrap' }}>
-            <Typography variant="h4" sx={{ fontWeight: 800, fontFamily: 'Outfit', letterSpacing: -0.5, color: '#FFFFFF' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 0.4, flexWrap: 'wrap' }}>
+            <Typography variant="h5" sx={{ fontWeight: 800, fontFamily: 'Outfit', letterSpacing: -0.5, color: '#FFFFFF', fontSize: { xs: '1.25rem', md: '1.4rem' } }}>
               Today's Flow
             </Typography>
             <Chip
@@ -75,11 +77,12 @@ const DashboardPage = () => {
                 color: '#FFFFFF',
                 border: '1px solid rgba(255, 255, 255, 0.4)',
                 px: 0.5,
-                fontSize: '0.8rem'
+                height: 24,
+                fontSize: '0.75rem'
               }}
             />
           </Box>
-          <Typography variant="body1" sx={{ color: '#F4EEFF', fontSize: '0.95rem', fontWeight: 500 }}>
+          <Typography variant="body2" sx={{ color: '#F4EEFF', fontSize: '0.875rem', fontWeight: 500 }}>
             {currentArchetypeObj.tagline} • You have <strong style={{ color: '#FFFFFF', fontWeight: 800 }}>{pendingCount} tasks</strong> pending.
           </Typography>
         </Box>
@@ -90,27 +93,27 @@ const DashboardPage = () => {
           className="skeuo-btn"
           title="Add Activity (Shortcut: Alt + A)"
           style={{
-            padding: '10px 20px',
-            borderRadius: '16px',
+            padding: '7px 16px',
+            borderRadius: '14px',
             background: 'linear-gradient(145deg, #FFFFFF, #F4EEFF)',
             color: '#7C5CFC',
-            boxShadow: '0px 4px 0px #D8B4FE, 0px 8px 20px rgba(0, 0, 0, 0.15)',
+            boxShadow: '0px 3px 0px #D8B4FE, 0px 6px 16px rgba(0, 0, 0, 0.12)',
             border: '1px solid rgba(255, 255, 255, 0.9)',
             fontWeight: 800,
-            fontSize: '0.9rem',
+            fontSize: '0.825rem',
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '8px',
             cursor: 'pointer'
           }}
         >
           <span>+ Add Activity</span>
           <span
             style={{
-              fontSize: '0.725rem',
+              fontSize: '0.675rem',
               fontWeight: 700,
-              padding: '2px 8px',
-              borderRadius: '8px',
+              padding: '2px 6px',
+              borderRadius: '6px',
               backgroundColor: 'rgba(124, 92, 252, 0.12)',
               color: '#7C5CFC',
               border: '1px solid rgba(124, 92, 252, 0.25)',
